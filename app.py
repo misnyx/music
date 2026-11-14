@@ -244,6 +244,6 @@ def run_flask():
 async def run_bot():
     await dp.start_polling(bot)
 
-if __name__ == "__main__":)
+if __name__ == "__main__":
     threading.Thread(target=run_flask, daemon=True).start()
     asyncio.run(run_bot())

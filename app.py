@@ -13,7 +13,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 import yt_dlp
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN", "ВСТАВЬТЕ_ТОКЕН...")
+BOT_TOKEN = os.environ.get("BOT_TOKEN", "ВСТАВЬТЕ_ТОКЕН_ЕСЛИ_ЗАПУСКАЕТЕ_ЛОКАЛЬНО")
 DOWNLOAD_DIR = Path("./downloads")
 DOWNLOAD_DIR.mkdir(exist_ok=True)
 
@@ -237,10 +237,13 @@ app = Flask(__name__)
 def health():
     return "Bot is running", 200
 
-def run_bot():
-    asyncio.run(dp.start_polling(bot))
-
-if __name__ == "__main__":
-    threading.Thread(target=run_bot, daemon=True).start()
+def run_flask():
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
+
+async def run_bot():
+    await dp.start_polling(bot)
+
+if __name__ == "__main__":)
+    threading.Thread(target=run_flask, daemon=True).start()
+    asyncio.run(run_bot())

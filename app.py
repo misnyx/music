@@ -13,7 +13,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 import yt_dlp
 
-BOT_TOKEN = os.environ.get("9168240043:AAGxy7DopH0z08u-VL1qSWG_ZcMnKRM14gE")
+BOT_TOKEN = os.environ.get("9168240043:AAHr52D77cz21UJPeEOSfR8sU_Mpr1jy9tc")
 DOWNLOAD_DIR = Path("./downloads")
 DOWNLOAD_DIR.mkdir(exist_ok=True)
 

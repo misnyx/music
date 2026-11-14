@@ -51,6 +51,7 @@ async def search_tracks(query: str, search_type: str) -> list[dict]:
     elif search_type == "playlist":
         suffix = " playlist"
     
+    # Убрали слово audio, чтобы не искались всякие подкасты
     search_url = f"ytsearch{SEARCH_LIMIT}:{query}{suffix}"
     
     ydl_opts = {
@@ -74,6 +75,10 @@ async def search_tracks(query: str, search_type: str) -> list[dict]:
     results = []
     for e in entries:
         if not e: continue
+        # Фильтруем живые трансляции, чтобы не попадали в скачивание
+        if e.get("is_live"):
+            continue
+            
         results.append({
             "id": e.get("id"),
             "title": e.get("title", "Unknown"),
@@ -81,7 +86,7 @@ async def search_tracks(query: str, search_type: str) -> list[dict]:
             "view_count": e.get("view_count") or 0,
         })
     
-    results.sort(key=lambda x: x["view_count"], reverse=True)
+    # Убрали сортировку по просмотрам, теперь идем в порядке релевантности YouTube
     return results
 
 async def download_audio(url: str) -> str | None:
@@ -189,7 +194,7 @@ async def process_type(callback: types.CallbackQuery, state: FSMContext):
     total_pages = (len(results) + PAGE_SIZE - 1) // PAGE_SIZE
     
     await callback.message.edit_text(
-        f"Результаты для «{query}» (по популярности). Страница 1/{total_pages}:",
+        f"Результаты для «{query}» (по релевантности). Страница 1/{total_pages}:",
         reply_markup=kb
     )
     await callback.answer()
@@ -204,7 +209,11 @@ async def handle_page(callback: types.CallbackQuery, state: FSMContext):
 
     page = int(callback.data.split(":")[1])
     kb = build_results_keyboard(results, page=page)
-    await callback.message.edit_reply_markup(reply_markup=kb)
+    total_pages = (len(results) + PAGE_SIZE - 1) // PAGE_SIZE
+    await callback.message.edit_text(
+        f"Результаты (по релевантности). Страница {page+1}/{total_pages}:",
+        reply_markup=kb
+    )
     await callback.answer()
 
 @dp.callback_query(F.data.startswith("dl:"))
